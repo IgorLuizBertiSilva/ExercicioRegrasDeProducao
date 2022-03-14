@@ -51,6 +51,9 @@ public class Jogo {
         
         System.out.println("");
         tabuleiro();
+        
+        
+        
     }
     
     public void tabuleiro(){
@@ -104,37 +107,82 @@ public class Jogo {
         
     }
     
-    public int[] Regras(){
+    public boolean[] regras(){
+        
+        boolean regras[] = new boolean[9];
         
         // A maior prioriadade vai pro mais proximo de zero
         // Regra 01: SE a vida do vilão atual é menor que vida do vilão anterior
         // ENTÃO colocar o vilão em posição aleatória
+        if(vidaVilaoAnterrior < vilao.getVida()){
+            regras[0] = true;
+        }else{
+            regras[0] = false;
+        }
         // Regra 02: SE a posição atual for a mesma que a posição do vilão E a 
-        // vida do vilão for zero ENTÃO vilão derrotado
+        // vida do vilão for menor que 1 ENTÃO vilão derrotado
+        if((vilao.check(heroi)) && vilao.getVida() < 1){
+            regras[1] = true;
+        }else{
+            regras[1] = false;
+        }
         // Regra 03: SE a posição atual for a mesma que a posição do vilão
         // ENTÃO atacaro o vilão
-        // Regra 03: SE a posição atual for a mesma que a posição do vilão
+        if(vilao.check(heroi)){
+            regras[2] = true;
+        }else{
+            regras[2] = false;
+        }
+        // Regra 04: SE a posição atual for a mesma que a posição do vilão
         // ENTÃO atacaro o vilão E o bonus estar ativo dar o DOBRO do dano
-        // Regra 04: SE a posição atual for a mesma que a posição do bonus
+        if(vilao.check(heroi)){
+            regras[3] = true;
+        }else{
+            regras[3] = false;
+        }
+        // Regra 05: SE a posição atual for a mesma que a posição do bonus
         // ENTÃO ativar o bonus
-        // Regra 05: SE o número da COLUNA da posição atual for SUPERIOR ao número
+        if((heroi.getPosX() == posXDoubleAttack) && (heroi.getPosY() == posYDoubleAttack)){
+            regras[4] = true;
+        }else{
+            regras[4] = false;
+        }
+        // Regra 06: SE o número da COLUNA da posição atual for SUPERIOR ao número
         // da coluna da posição do vilão ENTÃO dar um passo para a ESQUERDA.
-        // Regra 06: SE o número da COLUNA da posição atual for INFERIOR ao número
+        if((heroi.getPosY() > vilao.getPosY())){
+            regras[5] = true;
+        }else{
+            regras[5] = false;
+        }
+        // Regra 07: SE o número da COLUNA da posição atual for INFERIOR ao número
         // da coluna da posição do vilão ENTÃO dar um passo para a DIREIRA.
-        // Regra 07: SE o número da LINHA da posição atual for INFERIOR ao número
+        if(heroi.getPosY() < vilao.getPosY()){
+            regras[6] = true;
+        }else{
+            regras[6] = false;
+        }
+        // Regra 08: SE o número da LINHA da posição atual for INFERIOR ao número
         // da coluna da posição do vilão ENTÃO dar um passo para a BAIXO.
-        // Regra 08: SE o número da LINHA da posição atual for SUPERIOR ao número
+        if(heroi.getPosX() < vilao.getPosX()){
+            regras[7] = true;
+        }else{
+            regras[7] = false;
+        }
+        // Regra 09: SE o número da LINHA da posição atual for SUPERIOR ao número
         // da coluna da posição do vilão ENTÃO dar um passo para a CIMA.
+        if(heroi.getPosX() > vilao.getPosX()){
+            regras[8] = true;
+        }else{
+            regras[8] = false;
+        }
+                
+        return regras;
+    }
+    
+    public void ciclo(){
         
-        // Regra 09: SE o número da coluna da posição atual for superior ao número
-        // da coluna da posição do vilão ENTÃO dar um passo para a esquerda.
-        // Regra 10: SE o número da coluna da posição atual for superior ao número
-        // da coluna da posição do vilão ENTÃO dar um passo para a esquerda.
-        // Regra 11: SE o número da coluna da posição atual for superior ao número
-        // da coluna da posição do vilão ENTÃO dar um passo para a esquerda.
+        boolean regras[] = regras();
         
-        
-        return null;
     }
     
 }
