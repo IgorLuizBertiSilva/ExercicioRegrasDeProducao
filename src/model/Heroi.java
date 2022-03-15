@@ -84,6 +84,24 @@ public class Heroi {
     }
     
     
-    
+    public void move(String direcao){
+        
+        if("esquerda".equals(direcao)){
+            posX = posX - 1;
+        }
+        if("direita".equals(direcao)){
+            posX = posX + 1;
+        }
+        
+        if("cima".equals(direcao)){
+            posY = posY + 1;
+        }
+        
+        if("baixo".equals(direcao)){
+            posY = posY - 1;
+        }
+        
+        
+    }
     
 }
