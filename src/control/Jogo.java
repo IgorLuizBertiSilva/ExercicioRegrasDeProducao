@@ -36,7 +36,7 @@ public class Jogo {
 
         random = new Random(System.currentTimeMillis());
 
-        tamanho = 4;
+        tamanho = 10;
 
         int x = random.nextInt(tamanho);
         int y = random.nextInt(tamanho);
@@ -44,33 +44,50 @@ public class Jogo {
 
         System.out.println(heroi);
 
-        x = random.nextInt(tamanho);
-        y = random.nextInt(tamanho);
-        while (x == heroi.getPosX() && y == heroi.getPosY()) {
-            x = random.nextInt(tamanho);
-            y = random.nextInt(tamanho);
-        }
-
-        vilao = new Vilao(x, y);
-
-        System.out.println(vilao);
-
+        
+        
         this.posXDoubleAttack = random.nextInt(tamanho);
         this.posYDoubleAttack = random.nextInt(tamanho);
+        while(bonusMesmoLugar()){
+            this.posXDoubleAttack = random.nextInt(tamanho);
+            this.posYDoubleAttack = random.nextInt(tamanho);
+        }
+        
+        x = random.nextInt(tamanho);
+        y = random.nextInt(tamanho);
+        
+        vilao = new Vilao(x, y);
+        
+        while (vilaoMesmoLugar()) {
+            vilao.setPosX(random.nextInt(tamanho));
+            vilao.setPosY(random.nextInt(tamanho));
+            
+            
+        }
 
+        
+
+        System.out.println(vilao);
+        
+        
+        
+
+        
         vidaVilaoAnterrior = vilao.getVida();
         
         System.out.println("");
         
+        tabuleiro();
         
+        boolean sair = true;
 
-        while (vilao.getVida() > 0) {
+        while (sair) {
 
             String pass = scanner.nextLine();
 
             tabuleiro();
             
-            ciclo();
+            sair = ciclo();
 
         }
 
@@ -135,16 +152,16 @@ public class Jogo {
         // A maior prioriadade vai pro mais proximo de zero
         // Regra 01: SE a vida do vilão atual é menor que vida do vilão anterior
         // ENTÃO colocar o vilão em posição aleatória
-        regras[0] = vidaVilaoAnterrior < vilao.getVida();
+        regras[0] = (vilao.check(heroi)) && vilao.getVida() < 1;
         // Regra 02: SE a posição atual for a mesma que a posição do vilão E a 
         // vida do vilão for menor que 1 ENTÃO vilão derrotado
-        regras[1] = (vilao.check(heroi)) && vilao.getVida() < 1;
-        // Regra 03: SE a posição atual for a mesma que a posição do vilão
-        // ENTÃO atacaro o vilão
-        regras[2] = vilao.check(heroi);
-        // Regra 04: SE a posição atual for a mesma que a posição do vilão
+        regras[1] = vidaVilaoAnterrior != vilao.getVida();
+        // Regra 03: E a posição atual for a mesma que a posição do vilão
         // ENTÃO atacaro o vilão E o bonus estar ativo dar o DOBRO do dano
-        regras[3] = vilao.check(heroi) && heroi.isDoubleAttack();
+        regras[2] = vilao.check(heroi) && heroi.isDoubleAttack();
+        // Regra 04: SE a posição atual for a mesma que a posição do vilão
+        // ENTÃO atacaro o vilão
+        regras[3] = vilao.check(heroi);
         // Regra 05: SE a posição atual for a mesma que a posição do bonus
         // ENTÃO ativar o bonus
         regras[4] = (heroi.getPosX() == posXDoubleAttack) && (heroi.getPosY() == posYDoubleAttack);
@@ -164,7 +181,7 @@ public class Jogo {
         return regras;
     }
 
-    public void ciclo() {
+    public boolean ciclo() {
 
         boolean regras[] = regras();
         
@@ -178,36 +195,47 @@ public class Jogo {
 
         if (regras[0]) {
             
-            int x = random.nextInt(10);
-            int y = random.nextInt(10);
-            while(x== heroi.getPosX() && y==heroi.getPosY()){
-                x = random.nextInt(10);
-                y = random.nextInt(10);
+            System.out.println("!!Fim do Jogo!!");
+            return false;
+            
+        } else if (regras[1]) {
+            
+           
+            
+            int x = random.nextInt(tamanho);
+            int y = random.nextInt(tamanho);
+            while(vilaoMesmoLugar()){
+                x = random.nextInt(tamanho);
+                y = random.nextInt(tamanho);
             }
             
             vilao.teleporte(x, y);
             
+            vidaVilaoAnterrior = vilao.getVida();
+            
             System.out.println("Vilao se Teleportou");
-            
-        } else if (regras[1]) {
-            
-            System.out.println("Fim do Jogo");
             
 
         } else if (regras[2]) {
             
+            System.out.println("Dano Dobrado");
+            vidaVilaoAnterrior = vilao.getVida();
+            vilao.dano(2);
+            heroi.setDoubleAttack(false);
+            
+            
+            
+
+        } else if (regras[3]) {
+
             System.out.println("Dano");
             vidaVilaoAnterrior = vilao.getVida();
             vilao.dano(1);
 
-        } else if (regras[3]) {
-
-            System.out.println("Dano Dobrado");
-            vidaVilaoAnterrior = vilao.getVida();
-            vilao.dano(2);
-
         } else if (regras[4]) {
             heroi.setDoubleAttack(true);
+            posXDoubleAttack = -1;
+            posYDoubleAttack = -1;
 
         } else if (regras[5]) {
             System.out.println("Esquerda");
@@ -233,7 +261,24 @@ public class Jogo {
             System.out.println(vilao);
             heroi.move("cima");
         }
+        
+        return true;
 
+    }
+    
+    public boolean vilaoMesmoLugar(){
+        
+        return ((vilao.getPosX() == heroi.getPosX() && vilao.getPosY() == heroi.getPosY()) 
+                && (vilao.getPosX() == posXDoubleAttack && vilao.getPosY() == posYDoubleAttack));
+        
+    }
+    
+    public boolean bonusMesmoLugar(){
+        
+        
+        return (((posXDoubleAttack == heroi.getPosX()) && (posYDoubleAttack == heroi.getPosY())));
+        
+        
     }
 
 }
