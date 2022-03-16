@@ -94,11 +94,12 @@ public class Heroi {
         }
         
         if("cima".equals(direcao)){
-            posY = posY + 1;
+            posY = posY - 1;
         }
         
         if("baixo".equals(direcao)){
-            posY = posY - 1;
+            posY = posY +
+                    1;
         }
         
         
